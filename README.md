@@ -60,7 +60,11 @@ extension APIClient {
     var baseURL: String { get set }
   }
 }
+```
 
+Note: You need to manually add the conformance (Swift macro limitation prevents auto-generation):
+
+```swift
 extension APIClient: APIClient.`Protocol` {}
 ```
 

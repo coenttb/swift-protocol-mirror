@@ -17,11 +17,23 @@ public enum ProtocolMirrorMacro: ExtensionMacro {
     in context: some MacroExpansionContext
   ) throws -> [ExtensionDeclSyntax] {
     guard let structDecl = declaration.as(StructDeclSyntax.self) else {
+      let declType = if declaration.is(ClassDeclSyntax.self) {
+        "class"
+      } else if declaration.is(EnumDeclSyntax.self) {
+        "enum"
+      } else if declaration.is(ActorDeclSyntax.self) {
+        "actor"
+      } else {
+        "this declaration"
+      }
+
       context.diagnose(
         Diagnostic(
           node: declaration,
           message: MacroExpansionErrorMessage(
-            "'@ProtocolMirror' can only be applied to struct types"
+            "'@ProtocolMirror' can only be applied to struct types, but was applied to \(declType). " +
+            "Protocol mirroring requires a struct. If you need this for classes, please file an issue at " +
+            "https://github.com/coenttb/swift-protocol-mirror/issues"
           )
         )
       )
@@ -51,8 +63,9 @@ public enum ProtocolMirrorMacro: ExtensionMacro {
       }
       
       let isLet = property.bindingSpecifier.tokenKind == .keyword(.let)
-      let getterOnly = isLet || hasOnlyGetter(binding: binding)
-      
+      let isClosure = type.is(FunctionTypeSyntax.self)
+      let getterOnly = isLet || hasOnlyGetter(binding: binding) || isClosure
+
       // Add the property requirement
       let accessor = getterOnly ? "{ get }" : "{ get set }"
       let propertyReq: DeclSyntax = "var \(raw: identifier): \(type.trimmed) \(raw: accessor)"
@@ -108,10 +121,15 @@ public enum ProtocolMirrorMacro: ExtensionMacro {
         }
       }
     }
-    
-    // Don't auto-conform due to circular reference issue
-    // Users need to manually add: extension MyStruct: MyStruct.Protocol {}
-    
+
+    // NOTE: Cannot auto-generate conformance due to Swift macro limitation
+    // Attempting to create: extension MyStruct: MyStruct.Protocol {}
+    // causes "circular reference expanding extension macros" error because
+    // the compiler tries to resolve MyStruct.Protocol while still expanding the macro.
+    //
+    // Users must manually add: extension MyStruct: MyStruct.Protocol {}
+    // This is unfortunate but unavoidable with current macro system.
+
     return [protocolExtension]
   }
 }

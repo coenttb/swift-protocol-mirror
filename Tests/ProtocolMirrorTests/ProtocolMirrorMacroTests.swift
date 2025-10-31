@@ -26,11 +26,9 @@ final class ProtocolMirrorMacroTests: XCTestCase {
           protocol `Protocol` {
               var fetchUser: (Int) async throws -> User {
                   get
-                  set
               }
               var saveUser: (User) async throws -> Void {
                   get
-                  set
               }
               var config: Config {
                   get
