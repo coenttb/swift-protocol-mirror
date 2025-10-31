@@ -73,36 +73,36 @@ public enum ProtocolMirrorMacro: ExtensionMacro {
       
       // Check for method generation from labeled closures
       if let functionType = type.as(FunctionTypeSyntax.self) {
-        if let parameters = functionType.parameters.first,
-           let tupleType = parameters.type.as(TupleTypeSyntax.self) {
-          var hasLabels = false
-          var methodParams: [String] = []
-          
-          for element in tupleType.elements {
-            if let firstName = element.firstName?.text, firstName != "_" {
-              hasLabels = true
-              let paramType = element.type.trimmed
-              methodParams.append("\(firstName): \(paramType)")
+        var hasLabels = false
+        var methodParams: [String] = []
+
+        // Iterate through the function parameters (TupleTypeElementListSyntax)
+        for param in functionType.parameters {
+          // secondName is the actual parameter label (e.g., "id", "includeDetails")
+          // firstName is typically "_" (wildcard) for external parameter names
+          if let paramLabel = param.secondName?.text {
+            hasLabels = true
+            let paramType = param.type.trimmed
+            methodParams.append("\(paramLabel): \(paramType)")
+          }
+        }
+
+        if hasLabels {
+          let methodSignature = methodParams.joined(separator: ", ")
+          var methodDecl = "func \(identifier)(\(methodSignature))"
+
+          if let effectSpecifiers = functionType.effectSpecifiers {
+            if effectSpecifiers.asyncSpecifier != nil {
+              methodDecl += " async"
+            }
+            if effectSpecifiers.throwsClause != nil {
+              methodDecl += " throws"
             }
           }
-          
-          if hasLabels {
-            let methodSignature = methodParams.joined(separator: ", ")
-            var methodDecl = "func \(identifier)(\(methodSignature))"
-            
-            if let effectSpecifiers = functionType.effectSpecifiers {
-              if effectSpecifiers.asyncSpecifier != nil {
-                methodDecl += " async"
-              }
-              if effectSpecifiers.throwsClause != nil {
-                methodDecl += " throws"
-              }
-            }
-            
-            methodDecl += " -> \(functionType.returnClause.type.trimmed)"
-            
-            protocolMembers.append(DeclSyntax(stringLiteral: methodDecl))
-          }
+
+          methodDecl += " -> \(functionType.returnClause.type.trimmed)"
+
+          protocolMembers.append(DeclSyntax(stringLiteral: methodDecl))
         }
       }
     }
