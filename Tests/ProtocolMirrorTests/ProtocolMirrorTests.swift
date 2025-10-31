@@ -1,4 +1,4 @@
-import XCTest
+import Testing
 import ProtocolMirrorMacros
 import Foundation
 
@@ -16,32 +16,35 @@ struct AsyncClient {
 }
 extension AsyncClient: AsyncClient.`Protocol` {}
 
-final class ProtocolMirrorTests: XCTestCase {
-  
-  func testProtocolConformance() {
+@Suite("Protocol Conformance Tests")
+struct ProtocolMirrorTests {
+
+  @Test("Protocol conformance works correctly")
+  func protocolConformance() {
     let client = TestClient(
       fetch: { "test" },
       save: { _ in }
     )
-    
+
     func acceptsProtocol(_ client: any TestClient.`Protocol`) -> String {
       client.fetch()
     }
-    
-    XCTAssertEqual(acceptsProtocol(client), "test")
+
+    #expect(acceptsProtocol(client) == "test")
   }
-  
-  func testProtocolWithAsyncThrows() async throws {
+
+  @Test("Protocol with async throws works correctly")
+  func protocolWithAsyncThrows() async throws {
     let expectedData = Data([1, 2, 3])
     let client = AsyncClient(
       fetch: { expectedData }
     )
-    
+
     func useClient(_ client: any AsyncClient.`Protocol`) async throws -> Data {
       try await client.fetch()
     }
-    
+
     let data = try await useClient(client)
-    XCTAssertEqual(data, expectedData)
+    #expect(data == expectedData)
   }
 }

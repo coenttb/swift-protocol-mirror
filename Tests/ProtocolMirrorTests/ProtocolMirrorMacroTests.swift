@@ -1,11 +1,13 @@
-import XCTest
+import Testing
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import ProtocolMirrorPlugin
 
-final class ProtocolMirrorMacroTests: XCTestCase {
+@Suite("Protocol Mirror Macro Tests")
+struct ProtocolMirrorMacroTests {
 
-  func testBasicProtocolGeneration() {
+  @Test("Basic protocol generation")
+  func basicProtocolGeneration() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -43,7 +45,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
 
   // MARK: - Access Control Tests
 
-  func testPublicAccessControl() {
+  @Test("Public access control")
+  func publicAccessControl() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -69,7 +72,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
     )
   }
 
-  func testPackageAccessControl() {
+  @Test("Package access control")
+  func packageAccessControl() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -95,7 +99,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
     )
   }
 
-  func testPrivatePropertiesExcluded() {
+  @Test("Private properties excluded")
+  func privatePropertiesExcluded() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -125,7 +130,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
 
   // MARK: - Property Type Tests
 
-  func testLetPropertiesAreGetOnly() {
+  @Test("Let properties are get-only")
+  func letPropertiesAreGetOnly() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -156,7 +162,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
     )
   }
 
-  func testComputedPropertiesWithGetterOnly() {
+  @Test("Computed properties with getter only")
+  func computedPropertiesWithGetterOnly() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -189,7 +196,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
 
   // MARK: - Static Property Tests
 
-  func testStaticPropertiesExcluded() {
+  @Test("Static properties excluded")
+  func staticPropertiesExcluded() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -219,7 +227,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
 
   // MARK: - Method Generation Tests
 
-  func testLabeledClosureGeneratesMethod() {
+  @Test("Labeled closure generates method")
+  func labeledClosureGeneratesMethod() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -245,7 +254,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
     )
   }
 
-  func testUnlabeledClosureDoesNotGenerateMethod() {
+  @Test("Unlabeled closure does not generate method")
+  func unlabeledClosureDoesNotGenerateMethod() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -270,7 +280,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
     )
   }
 
-  func testMethodGenerationWithAsyncThrows() {
+  @Test("Method generation with async throws")
+  func methodGenerationWithAsyncThrows() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -298,7 +309,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
 
   // MARK: - Error Case Tests
 
-  func testErrorWhenAppliedToClass() {
+  @Test("Error when applied to class")
+  func errorWhenAppliedToClass() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -322,7 +334,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
     )
   }
 
-  func testErrorWhenAppliedToEnum() {
+  @Test("Error when applied to enum")
+  func errorWhenAppliedToEnum() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -346,7 +359,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
     )
   }
 
-  func testErrorWhenAppliedToActor() {
+  @Test("Error when applied to actor")
+  func errorWhenAppliedToActor() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -372,7 +386,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
 
   // MARK: - Edge Case Tests
 
-  func testEmptyStructGeneratesNoProtocol() {
+  @Test("Empty struct generates no protocol")
+  func emptyStructGeneratesNoProtocol() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -387,7 +402,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
     )
   }
 
-  func testStructWithOnlyStaticPropertiesGeneratesNoProtocol() {
+  @Test("Struct with only static properties generates no protocol")
+  func structWithOnlyStaticPropertiesGeneratesNoProtocol() {
     assertMacroExpansion(
       """
       @ProtocolMirror
@@ -406,7 +422,8 @@ final class ProtocolMirrorMacroTests: XCTestCase {
     )
   }
 
-  func testStructWithOnlyPrivatePropertiesGeneratesNoProtocol() {
+  @Test("Struct with only private properties generates no protocol")
+  func structWithOnlyPrivatePropertiesGeneratesNoProtocol() {
     assertMacroExpansion(
       """
       @ProtocolMirror
