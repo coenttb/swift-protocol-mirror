@@ -77,7 +77,7 @@ func performWork(client: any APIClient.Protocol) async throws {
   try await client.saveUser(user)
 }
 
-// Original struct conforms automatically
+// Use the original struct (which conforms via manual extension)
 let client = APIClient(
   fetchUser: { id in /* ... */ },
   saveUser: { user in /* ... */ },
