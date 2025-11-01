@@ -6,3 +6,17 @@ DerivedData/
 .swiftpm/configuration/registries.json
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 .netrc
+
+# AI assistant files
+.claude/
+CLAUDE.md
+CLAUDE.MD
+
+# Documentation (opt-in for top-level .md files only)
+/*.md
+!README.md
+!LICENSE.md
+!CHANGELOG.md
+!CONTRIBUTING.md
+!CODE_OF_CONDUCT.md
+!SECURITY.md
